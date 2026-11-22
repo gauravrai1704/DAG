@@ -11,6 +11,17 @@
 \usepackage{algpseudocode}
 \setlist{nosep,leftmargin=1.3em}
 \emergencystretch=1.5em
+\raggedbottom
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\section}{-.75\baselineskip}{-.45\baselineskip}{}{}
+\patchcmd{\subsection}{-.75\baselineskip}{-.45\baselineskip}{}{}
+\makeatother
+\setlength{\textfloatsep}{7pt plus 2pt minus 2pt}
+\setlength{\floatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{10pt plus 2pt minus 4pt}
+\AtBeginDocument{\setlength{\abovedisplayskip}{5pt plus 2pt minus 2pt}\setlength{\belowdisplayskip}{5pt plus 2pt minus 2pt}\setlength{\abovedisplayshortskip}{3pt plus 1pt}\setlength{\belowdisplayshortskip}{3pt plus 1pt}}
 
 \newcommand{\DED}{\textsc{DED}}
 \newcommand{\Unif}{\mathrm{U}}
@@ -31,7 +42,7 @@
 \affiliation{\institution{2410110165}\country{}}
 
 \begin{abstract}
-In the DAG Edge Deletion problem, \DED$(k)$, we are given a weighted directed acyclic graph (DAG) and a number $k$, and want to delete the cheapest set of edges so that no path with $k$ edges is left. The best previously published algorithm, by Kalantarzadeh, Klein and Reis (KKR, APPROX 2025), rounds a linear program (LP) using random vertex labels and achieves a ratio of $0.549(k+1)$. Under the Unique Games Conjecture (UGC) nothing better than $\lfloor k/2\rfloor$ is possible. We go through this algorithm and the earlier ones, prove why they work and how fast they run, and then push the method further. We found a label distribution that gives about $0.5446(k+1)$. We also show that no distribution of this kind can do better than $0.5431(k+1)$, and that the ratio $0.5(k+1)$ is possible whenever the DAG comes with a 3-colouring. Finally, we show that this approach cannot reach $0.5(k+1)$ on every DAG. Our code is at: \url{https://github.com/gauravrai1704/DAG}.
+\looseness=-1 In the DAG Edge Deletion problem, \DED$(k)$, we are given a weighted directed acyclic graph (DAG) and a number $k$, and want to delete the cheapest set of edges so that no path with $k$ edges is left. The best previously published algorithm, by Kalantarzadeh, Klein and Reis (KKR, APPROX 2025), rounds a linear program (LP) using random vertex labels and achieves a ratio of $0.549(k+1)$. Under the Unique Games Conjecture (UGC) nothing better than $\lfloor k/2\rfloor$ is possible. We go through this algorithm and the earlier ones, prove why they work and how fast they run, and then push the method further. We found a label distribution that gives about $0.5446(k+1)$. We also show that no distribution of this kind can do better than $0.5431(k+1)$, and that the ratio $0.5(k+1)$ is possible whenever the DAG comes with a 3-colouring. Finally, we show that this approach cannot reach $0.5(k+1)$ on every DAG. Our code is at: \url{https://github.com/gauravrai1704/DAG}.
 \end{abstract}
 
 \maketitle
@@ -40,9 +51,9 @@ In the DAG Edge Deletion problem, \DED$(k)$, we are given a weighted directed ac
 
 Let $G=(V,A)$ be a directed acyclic graph, let every edge $e$ have a cost $c_e\ge0$, and fix an integer $k\ge2$. The length of a path is its number of edges. In \DED$(k)$ we want a set $S\subseteq A$ of minimum total cost such that $G-S$ has no path of length $k$. Let OPT be the cost of an optimal deletion set.
 
-For example, let vertices be tasks and an edge $u\to v$ mean ``$u$ before $v$''. With $k$ time steps and unlimited machines, everything fits only if no chain of constraints has $k$ edges; otherwise \DED$(k)$ asks for the cheapest constraints to break.
+\looseness=-1 For example, let vertices be tasks and an edge $u\to v$ mean ``$u$ before $v$''. With $k$ time steps and unlimited machines, everything fits only if no chain of constraints has $k$ edges; otherwise \DED$(k)$ asks for the cheapest constraints to break.
 
-There is a second way to look at the problem that we use throughout. A DAG has no path of length $k$ exactly when we can give each vertex a level $\ell(v)\in\{1,\dots,k\}$ so that every edge goes from a lower level to a higher one (put $v$ at level $1+{}$the longest path ending at $v$). So the problem is the same as splitting the vertices into $k$ layers while paying for every edge that does not go strictly forward.
+\looseness=-1 There is a second way to look at the problem that we use throughout. A DAG has no path of length $k$ exactly when we can give each vertex a level $\ell(v)\in\{1,\dots,k\}$ so that every edge goes from a lower level to a higher one (put $v$ at level $1+{}$the longest path ending at $v$). So the problem is the same as splitting the vertices into $k$ layers while paying for every edge that does not go strictly forward.
 
 \textbf{A small example.} Take the path $a\to b\to c\to d$ with edge costs $5,1,5$, and let $k=2$. Deleting only the middle edge leaves $a\to b$ and $c\to d$ at cost 1, which is optimal. In terms of levels, $a,c$ go on level 1 and $b,d$ on level 2; only $b\to c$ goes backwards, so only it is paid for.
 
@@ -98,18 +109,18 @@ The algorithm of Kalantarzadeh, Klein and Reis~\cite{kkr} fixes this by making o
 \end{algorithmic}
 \end{algorithm}
 
-Edges with large $x_e$ are deleted easily, and edges with $x_e=0$ are deleted only if their label difference is exactly $-1$. If all labels are set to $0$, the rule becomes ``delete if $x_e\ge1/(k+1)$'', which is almost the threshold rule. So threshold rounding is a special case. The whole question is which distribution $\mu$ to use.
+\looseness=-1 Edges with large $x_e$ are deleted easily, and edges with $x_e=0$ are deleted only if their label difference is exactly $-1$. If all labels are set to $0$, the rule becomes ``delete if $x_e\ge1/(k+1)$'', which is almost the threshold rule. So threshold rounding is a special case. The whole question is which distribution $\mu$ to use.
 
 \textbf{Which labels?} The simplest choice, independent uniform labels, gives $(2-\sqrt2)(k+1)\approx0.586(k+1)$. KKR's density $p(x)=\frac23+\frac{23}3(1-2x)^{22}$, found by computer search, puts more weight near $0$ and $1$ and gives $0.549(k+1)$.
 
 \textbf{Our step labels.} We searched for a better density with an optimiser, splitting $[0,1]$ into $N$ equal pieces with a constant density $p_i$ on each. Then $X-Y$ has an exact formula, $\Pr[X-Y\le t]=\sum_dc_d\,T(Nt-d)$ with $c_d=\sum_{i-j=d}p_ip_j$, where $T$ is the cumulative distribution function (CDF) of the triangle distribution on $[-1,1]$. We ran L-BFGS, a standard quasi-Newton optimiser, from several starting points, one of them KKR's density. With $N=24$ we got a ratio of $0.54499(k+1)$, and with $N=48$ we got $0.5446(k+1)$.
 
-\textbf{Correlated labels.} Labels need not be independent. For a bipartite DAG, KKR give one side label $0$ and the other a uniform $y$, with a coin deciding which side is which. We noticed this extends to three colours: given a proper 3-colouring (ignoring directions), pick $Y$ uniform in $[0,1]$ and hand out $0$, $Y$, $1-Y$ to the colour classes in random order. Both give $0.5(k+1)$ (Section~\ref{sec:proofs}).
+\looseness=-1 \textbf{Correlated labels.} Labels need not be independent. For a bipartite DAG, KKR give one side label $0$ and the other a uniform $y$, with a coin deciding which side is which. We noticed this extends to three colours: given a proper 3-colouring (ignoring directions), pick $Y$ uniform in $[0,1]$ and hand out $0$, $Y$, $1-Y$ to the colour classes in random order. Both give $0.5(k+1)$ (Section~\ref{sec:proofs}).
 
 \section{Proof of Correctness}\label{sec:proofs}
 
 \subsection{Threshold and Klein's algorithm are valid}
-For threshold rounding this was shown in Section~2.1. For Klein's algorithm, take a path of length $k$ that survives the first step. All its edges have $x_e<\tau$ and the values add up to at least 1. So more than $1/\tau=\frac23(k+1)$ of its edges have $x_e>0$, and fewer than $\frac{k-2}3$ have $x_e=0$. The zero edges split the path into fewer than $\frac{k+1}3$ runs of positive edges, so the average run is longer than 2 edges. Some run then has at least 3 edges, say $p\to q\to r\to s$. Keeping all three would need $\ell(p)<\ell(q)<\ell(r)<\ell(s)$, which takes four different levels, but there are only three. So whatever levels are drawn, one of these edges does not go forward and is deleted, and the path is broken.
+\looseness=-1 For threshold rounding this was shown in Section~2.1. For Klein's algorithm, take a path of length $k$ that survives the first step. All its edges have $x_e<\tau$ and the values add up to at least 1. So more than $1/\tau=\frac23(k+1)$ of its edges have $x_e>0$, and fewer than $\frac{k-2}3$ have $x_e=0$. The zero edges split the path into fewer than $\frac{k+1}3$ runs of positive edges, so the average run is longer than 2 edges. Some run then has at least 3 edges, say $p\to q\to r\to s$. Keeping all three would need $\ell(p)<\ell(q)<\ell(r)<\ell(s)$, which takes four different levels, but there are only three. So whatever levels are drawn, one of these edges does not go forward and is deleted, and the path is broken.
 
 The cost analysis uses the following fact. We give a short proof of our own.
 \begin{lemma}\label{lem:avg}
@@ -159,21 +170,21 @@ Hardness results limit every efficient algorithm; integrality gaps limit every a
 
 \textbf{Hardness.} Svensson~\cite{sv} studied the vertex version of the problem, where we delete vertices instead of edges so that no path with $t$ vertices is left. Assuming the Unique Games Conjecture, Svensson showed that it is hard to tell DAGs where about $|V|/t$ deletions suffice from DAGs where almost all vertices must go. So the vertex version cannot be approximated within $t-\varepsilon$.
 
-Kenkre et al.~\cite{kpps} turn this into a result for edges with a simple gadget. Set $t=\lfloor k/2\rfloor$. Split every vertex $v$ into two vertices $v_{\text{in}}\to v_{\text{out}}$ joined by an edge of cost 1. Every original edge $u\to v$ becomes $u_{\text{out}}\to v_{\text{in}}$ and gets a very large cost, so no good solution deletes it. Deleting the edge $v_{\text{in}}\to v_{\text{out}}$ now plays the role of deleting the vertex $v$.
+\looseness=-1 Kenkre et al.~\cite{kpps} turn this into a result for edges with a simple gadget. Set $t=\lfloor k/2\rfloor$. Split every vertex $v$ into two vertices $v_{\text{in}}\to v_{\text{out}}$ joined by an edge of cost 1. Every original edge $u\to v$ becomes $u_{\text{out}}\to v_{\text{in}}$ and gets a very large cost, so no good solution deletes it. Deleting the edge $v_{\text{in}}\to v_{\text{out}}$ now plays the role of deleting the vertex $v$.
 \begin{itemize}
 \item A path in the new graph alternates between split edges and original edges, so any path with $k$ edges contains at least $\lfloor k/2\rfloor=t$ split edges, i.e., it runs through $t$ old vertices. So breaking every $t$-vertex path in the old graph breaks every $k$-edge path in the new one, at the same cost.
 \item In the other direction, a path through $t+1$ old vertices becomes a path of $2t+1\ge k$ edges. So any valid edge deletion also gives a valid vertex deletion of the same cost.
 \end{itemize}
 So the gap of about $t$ carries over, and \DED$(k)$ cannot be approximated better than $\lfloor k/2\rfloor-\varepsilon$ for constant $k\ge4$, assuming the UGC. The gadget graph is bipartite (in-copies on one side, out-copies on the other), which is why, under the UGC, the $\frac12(k+1)$ bipartite algorithm is essentially the best possible on these instances.
 
-\textbf{Integrality gap.} An LP-based algorithm cannot guarantee a ratio below the worst $\mathrm{OPT}/\mathrm{LP}$. Klein~\cite{kw} argues that this can be close to $\frac{k+1}2$, using a graph of Alon et al.~\cite{abglsc}. The idea is to build a DAG in which every way of placing vertices on $k$ levels loses many edges, while the fractional solution $x_e=\frac1k$ stays cheap.
+\looseness=-1 \textbf{Integrality gap.} An LP-based algorithm cannot guarantee a ratio below the worst $\mathrm{OPT}/\mathrm{LP}$. Klein~\cite{kw} argues that this can be close to $\frac{k+1}2$, using a graph of Alon et al.~\cite{abglsc}. The idea is to build a DAG in which every way of placing vertices on $k$ levels loses many edges, while the fractional solution $x_e=\frac1k$ stays cheap.
 \begin{itemize}
 \item \emph{The graph.} Choose a set $A$ of $r\approx n^{1/3}$ integers whose pairwise differences are all different. On the vertices $0,\dots,n-1$ (mod $n$), add an edge $i+a\to i+b$ for every $i$ and every $a<b$ in $A$. Because the differences are distinct, the edges split into $n$ cliques of size $r$ (one for each $i$) that share no edges.
 \item \emph{Why cliques matter.} An edge can only go forward if its two ends are on different levels. In a clique every two vertices are joined, so each pair placed on the same level costs an edge. The best we can do is spread the $r$ vertices evenly over the $k$ levels, and even then only about a $\frac{k-1}k$ fraction of the clique's edges join different levels.
 \item \emph{Direction.} Every vertex has the same in-degree and out-degree. For $k=2$ this means every cut is crossed equally often in both directions, so at most half of the edges joining the two levels go forward. That gives a kept fraction of at most about $\frac14$.
 \item \emph{Making it acyclic.} Only $O(r^4)$ edges wrap around mod $n$, a vanishing fraction. Deleting them gives a DAG.
 \end{itemize}
-Since $x_e=\frac1k$ satisfies every path constraint, $\mathrm{LP}\le\frac1k|E|$. For $k=2$ this gives $\mathrm{OPT}/\mathrm{LP}\ge\frac32-o(1)=\frac{k+1}2-o(1)$. For $k\ge3$, the thesis applies the same step to $k$ levels (``since $G$ is Eulerian the optimal ordering on the directed graph is at most half of this'', \cite[Sec.~3, p.~5]{kw}), and we could not confirm it. Equal in- and out-degrees alone do not give it: the directed triangle $1\to2\to3\to1$ is such a balanced graph, and with one vertex per level it keeps 2 of its 3 edges. To see whether this particular graph has extra structure that saves the step, we ran a local search over level assignments for $k=3$, maximising the number of forward edges (8 starting points, best result reported), with $r=11,17,23$. In every case about $59$--$60\%$ of the edges between different levels went forward, not at most half; the wrap-around edges (under $2\%$) cannot explain this. The best kept fractions were $0.416$, $0.403$ and $0.398$, against the $\frac13$ the argument needs. These instances are small, so this does not disprove the asymptotic claim, but it shows that the halving step fails on them. For $k\ge3$ we therefore treat the $\frac{k+1}2$ gap as a claim of~\cite{kw} that needs a different proof.
+\looseness=-1 Since $x_e=\frac1k$ satisfies every path constraint, $\mathrm{LP}\le\frac1k|E|$. For $k=2$ this gives $\mathrm{OPT}/\mathrm{LP}\ge\frac32-o(1)=\frac{k+1}2-o(1)$. For $k\ge3$, the thesis applies the same step to $k$ levels (``since $G$ is Eulerian the optimal ordering on the directed graph is at most half of this'', \cite[Sec.~3, p.~5]{kw}), and we could not confirm it. Equal in- and out-degrees alone do not give it: the directed triangle $1\to2\to3\to1$ is such a balanced graph, and with one vertex per level it keeps 2 of its 3 edges. To see whether this particular graph has extra structure that saves the step, we ran a local search over level assignments for $k=3$, maximising the number of forward edges (8 starting points, best result reported), with $r=11,17,23$. In every case about $59$--$60\%$ of the edges between different levels went forward, not at most half; the wrap-around edges (under $2\%$) cannot explain this. The best kept fractions were $0.416$, $0.403$ and $0.398$, against the $\frac13$ the argument needs. These instances are small, so this does not disprove the asymptotic claim, but it shows that the halving step fails on them. For $k\ge3$ we therefore treat the $\frac{k+1}2$ gap as a claim of~\cite{kw} that needs a different proof.
 
 \subsection{Limits of the method}
 
@@ -332,15 +343,15 @@ t uniform kkr ours
 \label{fig:window}
 \end{figure}
 
-\textbf{Independent labels cannot reach $\frac12$.} Here is the intuition. Picture each label $x$ as an arrow of length 1 pointing at angle $tx$. Then $\cos(t(X-Y))$ is how much the arrows of $X$ and $Y$ point the same way. If $X$ and $Y$ are independent with the same distribution, their arrows are on average the same arrow, so on average they cannot point against each other. Formally, $\E\cos(t(X-Y))=|\E e^{itX}|^2\ge0$, the squared length of the average arrow. For the uniform distribution on $[-1,1]$, however, $\E\cos(tU)=\sin t/t$, which is negative for $t\in(\pi,2\pi)$. So $X-Y$ can never be exactly uniform. KKR turn this into a number. If the CDF of $Z$ were close to the uniform one, $\E\cos(tZ)$ would be close to $\sin t/t<0$. Since it must be $\ge0$, the CDF has to be far from uniform somewhere, which means $\alpha$ cannot be close to $\frac12$. To measure how far, let $G(x)=\Pr[Z\le x]-\frac{1+x}2$, the gap between the two CDFs. Integration by parts turns the expectation into an integral of this gap:
+\looseness=-1 \textbf{Independent labels cannot reach $\frac12$.} Here is the intuition. Picture each label $x$ as an arrow of length 1 pointing at angle $tx$. Then $\cos(t(X-Y))$ is how much the arrows of $X$ and $Y$ point the same way. If $X$ and $Y$ are independent with the same distribution, their arrows are on average the same arrow, so on average they cannot point against each other. Formally, $\E\cos(t(X-Y))=|\E e^{itX}|^2\ge0$, the squared length of the average arrow. For the uniform distribution on $[-1,1]$, however, $\E\cos(tU)=\sin t/t$, which is negative for $t\in(\pi,2\pi)$. So $X-Y$ can never be exactly uniform. KKR turn this into a number. If the CDF of $Z$ were close to the uniform one, $\E\cos(tZ)$ would be close to $\sin t/t<0$. Since it must be $\ge0$, the CDF has to be far from uniform somewhere, which means $\alpha$ cannot be close to $\frac12$. To measure how far, let $G(x)=\Pr[Z\le x]-\frac{1+x}2$, the gap between the two CDFs. Integration by parts turns the expectation into an integral of this gap:
 \[\textstyle\E\cos(tZ)=\frac{\sin t}t+2t\int_0^1\sin(tx)G(x)\,dx.\]
 Using $(C_\alpha)$ to bound $G$ from both sides gives $\alpha\ge\frac12+\frac{-\sin t}{6t+2\sin t}$, which is about $0.539$ at $t\approx4.49$.
 
-We improved this by using several cosines at once. For weights $a_j\ge0$, the sum $\sum_ja_j\E\cos(t_jZ)$ is still non-negative. Repeating the same steps with $h(x)=\sum_ja_jt_j\sin(t_jx)$ gives
+\looseness=-1 We improved this by using several cosines at once. For weights $a_j\ge0$, the sum $\sum_ja_j\E\cos(t_jZ)$ is still non-negative. Repeating the same steps with $h(x)=\sum_ja_jt_j\sin(t_jx)$ gives
 \[\alpha\ge\frac12+\frac{-\sum_ja_j\sin(t_j)/t_j}{2\int_0^1\big(h^+(x)(1+x)+h^-(x)(1-x)\big)dx}.\]
 Optimising weights and frequencies numerically (each result checked by careful integration), two cosines give $0.5422$ and five give $0.5431$; each extra cosine helped less. With this formula, the two-cosine parameters printed in~\cite{kkr} ($4.4$, $8.9$, $0.29$) give $0.5388$, so we could not reproduce their $0.542$ from them, although re-optimised parameters do reach it. Figure~\ref{fig:window} puts all the bounds together.
 
-\textbf{Where colourings stop working.} Theorem~\ref{thm:3col} needs every pair of colours to have a uniform difference. With $c$ colours, $|\sum_{\text{colours}}e^{it\ell}|^2\ge0$ gives $\sin t/t\ge-1/(c-1)$. The smallest value of $\sin t/t$ is $-0.2172$, so this is only possible for $c\le5$. For 4 and 5 colours we solved LPs over label distributions on the grid $\{0,\frac1m,\dots,1\}$, checked with exact fractions: $0.5063$ for 4 colours ($m=40$) and $0.5106$ for 5 ($m=24$). Both equal the single-edge optimum on that grid, so we expect exactly $\frac12$ is reachable, but could not prove it. As planar graphs are 4-colourable in polynomial time, this gives $0.5064(k+1)$ for planar DAGs.
+\looseness=-1 \textbf{Where colourings stop working.} Theorem~\ref{thm:3col} needs every pair of colours to have a uniform difference. With $c$ colours, $|\sum_{\text{colours}}e^{it\ell}|^2\ge0$ gives $\sin t/t\ge-1/(c-1)$. The smallest value of $\sin t/t$ is $-0.2172$, so this is only possible for $c\le5$. For 4 and 5 colours we solved LPs over label distributions on the grid $\{0,\frac1m,\dots,1\}$, checked with exact fractions: $0.5063$ for 4 colours ($m=40$) and $0.5106$ for 5 ($m=24$). Both equal the single-edge optimum on that grid, so we expect exactly $\frac12$ is reachable, but could not prove it. As planar graphs are 4-colourable in polynomial time, this gives $0.5064(k+1)$ for planar DAGs.
 
 \textbf{Correlated labels cannot fix everything.} Every DAG sits inside a complete DAG $T_n$ (edges $i\to j$ for all $i<j$). Our LPs found labels with $\alpha=\frac12$ on $T_n$ for $n\le6$, but not beyond.
 
@@ -348,9 +359,9 @@ Optimising weights and frequencies numerically (each result checked by careful i
 For $n\ge429$, no distribution of labels, independent or not, satisfies $(C_{1/2})$ on $T_n$.
 \end{theorem}
 \begin{proof}
-Let $m_i=\E\ell(i)$. Condition $(C_{1/2})$ says the CDF of $Z_{ij}=\ell(j)-\ell(i)$ is below the uniform one, so $\E Z_{ij}\ge0$ and $m_1\le\dots\le m_n$, all in $[0,1]$. Integration by parts gives $\E\cos(tZ_{ij})-\frac{\sin t}t=t\int_{-1}^1\sin(tx)\,(F_{ij}(x)-U(x))\,dx$, where $F_{ij}$ is the CDF of $Z_{ij}$ and $U(x)=\frac{1+x}2$. By $(C_{1/2})$, $F_{ij}\le U$, so $|F_{ij}-U|=U-F_{ij}$, and $\int(U-F_{ij})=\E Z_{ij}=m_j-m_i$. With $|\sin|\le1$ this gives $|\E\cos(tZ_{ij})-\frac{\sin t}t|\le t(m_j-m_i)$. So pairs whose label means are close have a difference that behaves almost like a uniform one.
+\looseness=-1 Let $m_i=\E\ell(i)$. Condition $(C_{1/2})$ says the CDF of $Z_{ij}=\ell(j)-\ell(i)$ is below the uniform one, so $\E Z_{ij}\ge0$ and $m_1\le\dots\le m_n$, all in $[0,1]$. Integration by parts gives $\E\cos(tZ_{ij})-\frac{\sin t}t=t\int_{-1}^1\sin(tx)\,(F_{ij}(x)-U(x))\,dx$, where $F_{ij}$ is the CDF of $Z_{ij}$ and $U(x)=\frac{1+x}2$. By $(C_{1/2})$, $F_{ij}\le U$, so $|F_{ij}-U|=U-F_{ij}$, and $\int(U-F_{ij})=\E Z_{ij}=m_j-m_i$. With $|\sin|\le1$ this gives $|\E\cos(tZ_{ij})-\frac{\sin t}t|\le t(m_j-m_i)$. So pairs whose label means are close have a difference that behaves almost like a uniform one.
 
-The plan is now to find a group of vertices where \emph{all} pairs are like this, and then use the arrow argument on that group. Since $m$ only goes up and stays in $[0,1]$, it cannot rise much everywhere. Cut the vertices into $r=\lfloor n/w\rfloor$ blocks of $w$ consecutive vertices. The rises of $m$ over the blocks add up to at most 1, so some block has $m_j-m_i\le1/r$ for all pairs inside it. In that block $|\sum e^{it\ell(v)}|^2\ge0$ forces the average of $\E\cos(tZ_{ij})$ over pairs to be at least $-\frac1{w-1}$. Putting these together gives $-\frac1{w-1}\le\frac{\sin t}t+\frac tr$. Now take $t=4.4934$, where $\frac{\sin t}t=-0.21723$, and $w=11$, so $\frac1{w-1}=0.1$. The inequality needs $\frac tr\ge0.11723$, i.e., $r\le38.33$. For $n\ge429$ we have $r=\lfloor n/11\rfloor\ge39$, and then the right side is at most $-0.21723+\frac{4.4934}{39}=-0.10201<-0.1$, a contradiction. (Both constants are rounded upwards, which only makes the right side larger.)
+\looseness=-1 The plan is now to find a group of vertices where \emph{all} pairs are like this, and then use the arrow argument on that group. Since $m$ only goes up and stays in $[0,1]$, it cannot rise much everywhere. Cut the vertices into $r=\lfloor n/w\rfloor$ blocks of $w$ consecutive vertices. The rises of $m$ over the blocks add up to at most 1, so some block has $m_j-m_i\le1/r$ for all pairs inside it. In that block $|\sum e^{it\ell(v)}|^2\ge0$ forces the average of $\E\cos(tZ_{ij})$ over pairs to be at least $-\frac1{w-1}$. Putting these together gives $-\frac1{w-1}\le\frac{\sin t}t+\frac tr$. Now take $t=4.4934$, where $\frac{\sin t}t=-0.21723$, and $w=11$, so $\frac1{w-1}=0.1$. The inequality needs $\frac tr\ge0.11723$, i.e., $r\le38.33$. For $n\ge429$ we have $r=\lfloor n/11\rfloor\ge39$, and then the right side is at most $-0.21723+\frac{4.4934}{39}=-0.10201<-0.1$, a contradiction. (Both constants are rounded upwards, which only makes the right side larger.)
 \end{proof}
 So no algorithm of this kind (one fixed label distribution, edges checked separately) can prove $\frac12(k+1)$ for all DAGs.
 
@@ -378,7 +389,7 @@ no one distribution gets $0.5$ on all DAGs & proof\\
 \end{tabular}
 \end{table}
 
-The main thing we learned is that, once Lemmas~\ref{lem:feas} and~\ref{lem:cost} are in place, the whole problem becomes a question about one random variable: how close can the label difference $Z$ get to the uniform distribution on $[-1,1]$? Every result in Table~\ref{tab:ours} answers a version of this question. For independent labels the best constant is now in $[0.5431,0.5446]$. With correlated labels, $\frac12(k+1)$ extends to 3-colourable DAGs but not to all DAGs.
+\looseness=-1 The main thing we learned is that, once Lemmas~\ref{lem:feas} and~\ref{lem:cost} are in place, the whole problem becomes a question about one random variable: how close can the label difference $Z$ get to the uniform distribution on $[-1,1]$? Every result in Table~\ref{tab:ours} answers a version of this question. For independent labels the best constant is now in $[0.5431,0.5446]$. With correlated labels, $\frac12(k+1)$ extends to 3-colourable DAGs but not to all DAGs.
 
 \section{Gaps and Future Directions}
 \begin{itemize}
@@ -389,9 +400,7 @@ The main thing we learned is that, once Lemmas~\ref{lem:feas} and~\ref{lem:cost}
 \item \emph{Closing the window.} The cosine method ignores that densities are non-negative, likely why it levels off (as in~\cite{cs}).
 \end{itemize}
 
-\clearpage
-\onecolumn
-\begin{thebibliography}{9}
+\begin{thebibliography}{9}\setlength{\itemsep}{0pt}
 \bibitem{kkr} S.~Kalantarzadeh, N.~Klein, V.~Reis. A randomized rounding approach for DAG edge deletion. APPROX 2025; arXiv:2507.07943.
 \bibitem{kpps} S.~Kenkre, V.~Pandit, M.~Purohit, R.~Saket. On the approximability of digraph ordering. ESA 2015; Algorithmica 78(4), 2017.
 \bibitem{kw} N.~Klein (advisor T.~Wexler). On the approximability of DAG edge deletion. Thesis, 2015--16.
