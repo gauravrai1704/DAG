@@ -70,7 +70,7 @@ $0.549(k+1)$ & KKR~\cite{kkr}: tuned random labels\\
 $0.5(k+1)$, bipartite DAGs & KKR~\cite{kkr}: correlated labels\\
 \midrule
 no $\lfloor k/2\rfloor-\varepsilon$ (UGC) & \cite{kpps}, building on Svensson~\cite{sv}\\
-no $\sqrt2-\varepsilon$ (NP), $k\ge4$ & \cite{kkr}: reduction from Vertex Cover\\
+no $\sqrt2-\varepsilon$ (NP), $k\ge4$ & from Vertex Cover: $1.36$ in~\cite{kw}, $\sqrt2$ in~\cite{kkr}\\
 LP gap $\frac32$ ($k=2$); $\frac{k+1}2$ claimed & Klein~\cite{kw}, using~\cite{abglsc} (see Section~3.4)\\
 \bottomrule
 \end{tabular}
@@ -385,7 +385,7 @@ The main thing we learned is that, once Lemmas~\ref{lem:feas} and~\ref{lem:cost}
 \item \emph{The integrality gap for $k\ge3$.} It needs a new proof or a new instance (Section~3.4).
 \item \emph{A gap in an earlier proof.} When we worked through Klein's $\frac23(k+1)$ algorithm~\cite{kw}, we could not complete the cost step: Lemma~\ref{lem:avg} bounds the deleted low-value edges only against the whole LP, which gives about $0.89k$. The newer results do not use this step.
 \item \emph{One bound is only checked in floating point.} The upper bound $0.5446$ was checked carefully, but not with exact arithmetic. Interval arithmetic would make it a full proof.
-\item \emph{NP-hardness.} Whether any constant factor is NP-hard is open~\cite{kkr}.
+\item \emph{NP-hardness.} Only a constant factor ($\sqrt2$) is known to be NP-hard. Whether it is NP-hard to get an $O(1)$-approximation at all is open~\cite{kkr}.
 \item \emph{Closing the window.} The cosine method ignores that densities are non-negative, likely why it levels off (as in~\cite{cs}).
 \end{itemize}
 
