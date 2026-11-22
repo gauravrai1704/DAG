@@ -42,7 +42,7 @@ Let $G=(V,A)$ be a directed acyclic graph, let every edge $e$ have a cost $c_e\g
 
 For example, let vertices be tasks and an edge $u\to v$ mean ``$u$ before $v$''. With $k$ time steps and unlimited machines, everything fits only if no chain of constraints has $k$ edges; otherwise \DED$(k)$ asks for the cheapest constraints to break.
 
-We use a second view throughout: a DAG has no path of length $k$ exactly when we can give each vertex a level $\ell(v)\in\{1,\dots,k\}$ so that every edge goes from a lower level to a higher one (put $v$ at level $1+{}$the longest path ending at $v$). So the problem is the same as splitting the vertices into $k$ layers while paying for every edge that does not go strictly forward.
+There is a second way to look at the problem that we use throughout. A DAG has no path of length $k$ exactly when we can give each vertex a level $\ell(v)\in\{1,\dots,k\}$ so that every edge goes from a lower level to a higher one (put $v$ at level $1+{}$the longest path ending at $v$). So the problem is the same as splitting the vertices into $k$ layers while paying for every edge that does not go strictly forward.
 
 \textbf{A small example.} Take the path $a\to b\to c\to d$ with edge costs $5,1,5$, and let $k=2$. Deleting only the middle edge leaves $a\to b$ and $c\to d$ at cost 1, which is optimal. In terms of levels, $a,c$ go on level 1 and $b,d$ on level 2; only $b\to c$ goes backwards, so only it is paid for.
 
@@ -54,11 +54,11 @@ The graph has to be acyclic: on a general digraph with $k=n-1$, deciding whether
 \text{s.t.}\ &\textstyle\sum_{e\in P}x_e\ge1\quad\text{for every path $P$ of length $k$},\\
 &x_e\ge0\quad\text{for every edge $e$}.
 \end{align*}
-Any valid deletion set is a feasible 0/1 solution, so $\mathrm{LP}\le\mathrm{OPT}$. Table~\ref{tab:known} lists prior results.
+Any valid deletion set gives a feasible 0/1 solution, so the LP value is at most OPT. Table~\ref{tab:known} lists what was known before we started.
 
 \begin{table}[t]
 \caption{Known results for \DED$(k)$.}\label{tab:known}
-\footnotesize
+\small
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.40\columnwidth}>{\raggedright\arraybackslash}p{0.55\columnwidth}@{}}
 \toprule
 Bound & Source and idea\\
@@ -85,7 +85,7 @@ Solve the LP and delete every edge with $x_e\ge1/k$. Each path of length $k$ has
 Klein~\cite{kw} was the first to beat $k$. The algorithm first deletes every edge with $x_e\ge\tau$, where $\tau=\frac{3}{2(k+1)}$. Then it puts every vertex on a random level from $\{1,2,3\}$ and deletes the remaining edges with $x_e>0$ that do not go forward.
 
 \subsection{Rounding with random labels}\label{sec:labels}
-The KKR algorithm~\cite{kkr} fixes this with one global random choice. Each vertex gets a real label in $[0,1]$, which we can think of as a ``soft level''. An edge is deleted when it does not climb enough, where the amount it needs to climb depends on its LP value (Algorithm~\ref{alg:kkr}).
+The algorithm of Kalantarzadeh, Klein and Reis~\cite{kkr} fixes this by making one global random choice. Each vertex gets a real label in $[0,1]$, which we can think of as a ``soft level''. An edge is deleted when it does not climb enough, where the amount it needs to climb depends on its LP value (Algorithm~\ref{alg:kkr}).
 
 \begin{algorithm}[t]
 \caption{Label rounding for \DED$(k)$}\label{alg:kkr}
@@ -142,9 +142,9 @@ Edge $e$ is deleted when $Z_e\le t$ with $t=(k+1)x_e-1$. If $t\le1$, condition $
 
 At $t=1$ the condition forces $\alpha\ge\frac12$. For symmetric $Z_e$ it also gives the lower bound $1-\alpha(1-t)$ on the CDF, and at $\alpha=\frac12$ the two bounds meet. So $\frac12(k+1)$ needs every $Z_e$ to be \emph{exactly} uniform on $[-1,1]$.
 
-\textbf{Uniform labels give $2-\sqrt2$.} If both labels are uniform, $Z$ has the triangle distribution, with $\Pr[Z\le t]=1-(1-t)^2/2$ for $t\ge0$. Maximising $\Pr[Z\le t]/(1+t)$ gives $t^2+2t-1=0$, so $t=\sqrt2-1$ and ratio $2-\sqrt2$ (for $t<0$ it is at most $\frac12$).
+\textbf{Uniform labels give $2-\sqrt2$.} If both labels are uniform, $Z$ has the triangle distribution, with $\Pr[Z\le t]=1-(1-t)^2/2$ for $t\ge0$. Setting the derivative of $\Pr[Z\le t]/(1+t)$ to zero gives $t^2+2t-1=0$, so $t=\sqrt2-1$ and the ratio is $2-\sqrt2$. For $t<0$ the ratio is at most $\frac12$.
 
-\textbf{Our step density.} The CDF only goes up, so on $[t_0,t_1]$, $\Pr[Z\le t]/(1+t)\le\Pr[Z\le t_1]/(1+t_0)$. On $4$ million intervals, with the weights as exact fractions, this gives $0.544510$ for $N=48$.
+\textbf{Our step density.} Since the CDF of $Z$ only goes up, on any small interval $[t_0,t_1]$ we have $\Pr[Z\le t]/(1+t)\le\Pr[Z\le t_1]/(1+t_0)$. We evaluated this bound on $4$ million intervals, with the weights stored as exact fractions, and got $0.544510$ for $N=48$.
 
 \begin{theorem}\label{thm:3col}
 Given a DAG with a proper 3-colouring $\chi$ of its underlying undirected graph, the three-value labelling from Section~\ref{sec:labels} makes Algorithm~\ref{alg:kkr} a $\frac12(k+1)$-approximation.
@@ -314,7 +314,7 @@ t uniform kkr ours
 1.000 0.50000 0.50000 0.50000
 }\ratiodata
 \begin{tikzpicture}
-\begin{axis}[width=\columnwidth, height=4.0cm, xmin=-0.3, xmax=1, ymin=0.37, ymax=0.6,
+\begin{axis}[width=\columnwidth, height=4.3cm, xmin=-0.3, xmax=1, ymin=0.37, ymax=0.6,
   xlabel={threshold $t$}, ylabel={$\Pr[Z\le t]\,/\,(1+t)$},
   tick label style={font=\scriptsize}, label style={font=\small},
   ytick={0.4,0.45,0.5,0.55,0.6}, grid=major, grid style={gray!20},
@@ -359,12 +359,12 @@ So no algorithm of this kind (one fixed label distribution, edges checked separa
 \[a(v,t)=\min_{(u,v)\in A}\big(a(u,t-1)+x_{uv}\big),\qquad a(v,0)=0.\]
 A constraint is violated exactly when some $a(v,k)<1$. This takes $O(k(|V|+|A|))$ time, so the ellipsoid method solves the LP in polynomial time.
 
-\textbf{Rounding.} Drawing labels takes $O(|V|)$ and checking edges $O(|A|)$, so the LP dominates: the total is polynomial in $n$ and $k$, with no exponential dependence on $k$. The algorithm can be derandomised with the method of conditional expectations, losing an arbitrarily small amount.
+\textbf{Rounding.} Drawing the labels takes $O(|V|)$ time for every distribution here, and checking the edges takes $O(|A|)$. So the LP dominates the total time, which is polynomial in $n$ and $k$ with no exponential dependence on $k$. The algorithm can be derandomised with the method of conditional expectations, losing an arbitrarily small amount.
 
 \section{Conclusion}
 \begin{table}[h]
 \caption{Summary of our results.}\label{tab:ours}
-\footnotesize
+\small
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.55\columnwidth}>{\raggedright\arraybackslash}p{0.40\columnwidth}@{}}
 \toprule
 Result & How it was shown\\
@@ -378,13 +378,13 @@ no one distribution gets $0.5$ on all DAGs & proof\\
 \end{tabular}
 \end{table}
 
-Our main lesson: once Lemmas~\ref{lem:feas} and~\ref{lem:cost} are in place, everything is one question, how close the label difference $Z$ can get to uniform on $[-1,1]$, and each result in Table~\ref{tab:ours} answers a version of it. For independent labels the best constant is now in $[0.5431,0.5446]$. With correlated labels, $\frac12(k+1)$ extends to 3-colourable DAGs but not to all DAGs.
+The main thing we learned is that, once Lemmas~\ref{lem:feas} and~\ref{lem:cost} are in place, the whole problem becomes a question about one random variable: how close can the label difference $Z$ get to the uniform distribution on $[-1,1]$? Every result in Table~\ref{tab:ours} answers a version of this question. For independent labels the best constant is now in $[0.5431,0.5446]$. With correlated labels, $\frac12(k+1)$ extends to 3-colourable DAGs but not to all DAGs.
 
 \section{Gaps and Future Directions}
 \begin{itemize}
 \item \emph{The integrality gap for $k\ge3$.} It needs a new proof or a new instance (Section~3.4).
 \item \emph{A gap in an earlier proof.} When we worked through Klein's $\frac23(k+1)$ algorithm~\cite{kw}, we could not complete the cost step: Lemma~\ref{lem:avg} bounds the deleted low-value edges only against the whole LP, which gives about $0.89k$. The newer results do not use this step.
-\item \emph{Floating point.} The $0.5446$ bound is checked numerically, not with interval arithmetic.
+\item \emph{One bound is only checked in floating point.} The upper bound $0.5446$ was checked carefully, but not with exact arithmetic. Interval arithmetic would make it a full proof.
 \item \emph{NP-hardness.} Only a constant factor ($\sqrt2$) is known to be NP-hard. Whether it is NP-hard to get an $O(1)$-approximation at all is open~\cite{kkr}.
 \item \emph{Closing the window.} The cosine method ignores that densities are non-negative, likely why it levels off (as in~\cite{cs}).
 \end{itemize}
