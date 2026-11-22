@@ -28,13 +28,10 @@
 \affiliation{\institution{2410110315}\country{}}
 \author{Kashvi Tak}
 \affiliation{\institution{2410110165}\country{}}
-\renewcommand{\shortauthors}{Rai, Sharma, Gupta and Tak}
 
 \begin{abstract}
-We study the DAG Edge Deletion problem. We are given a weighted DAG and a number $k$, and we want to delete the cheapest set of edges so that no path with $k$ edges is left. The best known algorithm, by Kalantarzadeh, Klein and Reis (APPROX 2025), rounds a linear program using random vertex labels and gets a ratio of $0.549(k+1)$. Under the Unique Games Conjecture nothing better than $\lfloor k/2\rfloor$ is possible. In this report we go through that algorithm and the earlier ones, and prove why they work and how fast they run. We then tried to push the method further. We found a label distribution that gives about $0.5445(k+1)$. We also show that no distribution of this kind can do better than $0.5431(k+1)$, and that the ratio $0.5(k+1)$ is possible whenever the DAG comes with a 3-colouring. Finally, we show that this approach cannot reach $0.5(k+1)$ on every DAG.
+We study the DAG Edge Deletion problem. We are given a weighted DAG and a number $k$, and we want to delete the cheapest set of edges so that no path with $k$ edges is left. The best known algorithm, by Kalantarzadeh, Klein and Reis (APPROX 2025), rounds a linear program using random vertex labels and gets a ratio of $0.549(k+1)$. Under the Unique Games Conjecture nothing better than $\lfloor k/2\rfloor$ is possible. In this report we go through that algorithm and the earlier ones, and prove why they work and how fast they run. We then tried to push the method further. We found a label distribution that gives about $0.5445(k+1)$. We also show that no distribution of this kind can do better than $0.5431(k+1)$, and that the ratio $0.5(k+1)$ is possible whenever the DAG comes with a 3-colouring. Finally, we show that this approach cannot reach $0.5(k+1)$ on every DAG. Our code is at: \url{https://github.com/gauravrai1704/DAG}.
 \end{abstract}
-
-\keywords{approximation algorithms, randomized rounding, linear programming, DAG edge deletion}
 
 \maketitle
 
@@ -42,7 +39,7 @@ We study the DAG Edge Deletion problem. We are given a weighted DAG and a number
 
 Let $G=(V,A)$ be a directed acyclic graph, let every edge $e$ have a cost $c_e\ge0$, and fix an integer $k\ge2$. The length of a path is its number of edges. In \DED$(k)$ we want a set $S\subseteq A$ of minimum total cost such that $G-S$ has no path of length $k$.
 
-A simple example explains where this comes up. Think of vertices as tasks and an edge $u\to v$ as ``$u$ should finish before $v$''. If we have $k$ time steps and as many machines as we like, we can finish everything only if the longest chain of constraints has fewer than $k$ edges. When it doesn't, we have to break some constraints, and \DED$(k)$ asks for the cheapest ones to break. The same question appears when reducing the depth of circuits.
+A simple example explains where this comes up. Think of vertices as tasks and an edge $u\to v$ as ``$u$ should finish before $v$''. If we have $k$ time steps and as many machines as we like, we can finish everything only if the longest chain of constraints has fewer than $k$ edges. When it doesn't, we have to break some constraints, and \DED$(k)$ asks for the cheapest ones to break.
 
 There is a second way to look at the problem that we use throughout. A DAG has no path of length $k$ exactly when we can give each vertex a level $\ell(v)\in\{1,\dots,k\}$ so that every edge goes from a lower level to a higher one (put $v$ at level $1+{}$the longest path ending at $v$). So the problem is the same as splitting the vertices into $k$ layers while paying for every edge that does not go strictly forward.
 
@@ -60,7 +57,7 @@ Any valid deletion set gives a feasible 0/1 solution, so the LP value is at most
 
 \begin{table}[t]
 \caption{Known results for \DED$(k)$.}\label{tab:known}
-\small\renewcommand{\arraystretch}{1.15}
+\small
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.40\columnwidth}>{\raggedright\arraybackslash}p{0.55\columnwidth}@{}}
 \toprule
 Bound & Source and idea\\
@@ -78,7 +75,7 @@ LP gap at least $(k+1)/2$ & Klein and Wexler~\cite{kw,abglsc}\\
 \end{tabular}
 \end{table}
 
-\section{Algorithm}
+\section{Algorithms}
 
 \subsection{A first try: threshold rounding}
 Solve the LP and delete every edge with $x_e\ge1/k$. Each path of length $k$ has $k$ edges whose values add up to at least 1, so one of them is at least $1/k$, and the path is broken. An edge we delete had $x_e\ge 1/k$, so its cost is at most $k\cdot c_ex_e$. This gives a factor of $k$. It is the best this rule can do: on a single path with every $x_e=1/k$, it deletes all $k$ edges when one would have been enough. The rule looks at each path separately, and that is the reason it loses so much.
@@ -136,7 +133,6 @@ Suppose a path $P$ of length $k$ from $a$ to $b$ survives. Every edge on it was 
 \[\ell(b)-\ell(a)>(k+1)\textstyle\sum_{e\in P}x_e-k\ge(k+1)-k=1.\]
 But both labels are in $[0,1]$, so their difference is at most 1. This is a contradiction.
 \end{proof}
-So randomness never affects whether the answer is correct. It only affects the cost.
 
 \subsection{The cost bound}
 Let $Z_e=\ell(v)-\ell(u)$ for an edge $e=(u,v)$.
@@ -164,7 +160,7 @@ An edge joins two different colours. The order in which the values are handed ou
 The bipartite case of KKR is the same proof with only the values $\{0,Y\}$. Some classes where a 3-colouring is easy to find are DAGs of maximum degree 3 (except $K_4$), and outerplanar and series-parallel DAGs.
 
 \subsection{How well can any algorithm do?}
-Before looking at the limits of label rounding, it helps to know the limits for any algorithm. There are two kinds: hardness results, which hold for every polynomial-time algorithm, and integrality gaps, which hold for every algorithm that compares itself to this LP.
+There are two kinds: hardness results, which hold for every polynomial-time algorithm, and integrality gaps, which hold for every algorithm that compares itself to this LP.
 
 \textbf{Hardness.} Svensson~\cite{sv} studied the vertex version of the problem, where we delete vertices instead of edges so that no path with $t$ vertices is left. Assuming the Unique Games Conjecture, he showed it is hard to tell apart two kinds of DAGs. In the first kind, removing about $|V|/t$ vertices is enough. In the second kind, almost all vertices must be removed. So no algorithm can approximate the vertex version within $t-\varepsilon$.
 
@@ -173,7 +169,7 @@ Kenkre et al.~\cite{kpps} turn this into a result for edges with a simple gadget
 \item A path in the new graph alternates between split edges and original edges. So a path of $2t\le k$ edges passes through $t$ split edges, that is, through $t$ old vertices. If the deleted vertices broke every $t$-vertex path in the old graph, then every $k$-edge path in the new graph is broken too, at the same cost.
 \item In the other direction, a path through $t+1$ old vertices becomes a path of $2t+1\ge k$ edges. So any valid edge deletion also gives a valid vertex deletion of the same cost.
 \end{itemize}
-The costs are the same in both directions, so the gap of about $t$ carries over. Hence \DED$(k)$ cannot be approximated better than $\lfloor k/2\rfloor-\varepsilon$ for constant $k\ge4$, assuming the UGC. Adding long paths of undeletable edges shows the bound does not get weaker when $k$ grows. The gadget graph is bipartite (in-copies on one side, out-copies on the other), which is why the $\frac12(k+1)$ bipartite algorithm is essentially the best possible on these instances. Without the UGC, a reduction from Vertex Cover only rules out ratios below about $\sqrt2$.
+The costs are the same in both directions, so the gap of about $t$ carries over. Hence \DED$(k)$ cannot be approximated better than $\lfloor k/2\rfloor-\varepsilon$ for constant $k\ge4$, assuming the UGC. The gadget graph is bipartite (in-copies on one side, out-copies on the other), which is why the $\frac12(k+1)$ bipartite algorithm is essentially the best possible on these instances.
 
 \textbf{Integrality gap.} The ratio of every LP-based algorithm in this report is measured against the LP value. So none of them can beat the worst ratio $\mathrm{OPT}/\mathrm{LP}$ over all instances. Klein and Wexler~\cite{kw} showed that this ratio can be close to $\frac{k+1}2$, using a graph of Alon et al.~\cite{abglsc}:
 \begin{itemize}
@@ -182,13 +178,13 @@ The costs are the same in both directions, so the gap of about $t$ carries over.
 \item Every vertex has the same in-degree and out-degree. Because of this, at most half of those edges go forward. So any solution keeps at most about $\frac{k-1}{2k}$ of the edges, and must delete at least about $\frac{k+1}{2k}$ of them.
 \item The graph is not quite acyclic, because of the edges that wrap around modulo $n$. There are only $O(r^4)$ of them, a vanishing fraction, and deleting them makes it a DAG.
 \end{itemize}
-On the other hand, setting $x_e=\frac1k$ for every edge satisfies every path constraint, so the LP value is at most $\frac1k|E|$. Dividing gives $\mathrm{OPT}/\mathrm{LP}\ge\frac{k+1}{2}-o(1)$. So no rounding of this LP can guarantee better than $\frac12(k+1)$, and the gap between the best algorithm and this limit is only in the constant (0.549 or, with our labels, 0.5445, against 0.5). A nice check is that on this graph the optimal rounding is simply a uniformly random choice of levels, which deletes each edge with probability $\frac{k+1}{2k}$.
+On the other hand, setting $x_e=\frac1k$ for every edge satisfies every path constraint, so the LP value is at most $\frac1k|E|$. Dividing gives $\mathrm{OPT}/\mathrm{LP}\ge\frac{k+1}{2}-o(1)$. So no rounding of this LP can guarantee better than $\frac12(k+1)$, and the gap between the best algorithm and this limit is only in the constant (0.549 or, with our labels, 0.5445, against 0.5).
 
 \subsection{Limits of the method}
 
 \begin{figure*}[t]
 \centering
-\begin{tikzpicture}[x=1.05cm,y=0.85cm,font=\small]
+\begin{tikzpicture}[x=1.05cm,y=0.6cm,font=\small]
 \fill[blue!12] ({(0.5431-0.536)*1000},-0.25) rectangle ({(0.5445-0.536)*1000},0.25);
 \draw[thick,gray] (0,0) -- (14,0);
 \node[below,gray] at (0,-0.1) {0.536}; \node[below,gray] at (14,-0.1) {0.550};
@@ -238,14 +234,10 @@ A constraint is violated exactly when some $a(v,k)<1$. This takes $O(k(|V|+|A|))
 
 \textbf{Rounding.} Drawing the labels takes $O(|V|)$ time for every distribution in this report: one sample per vertex for independent labels, or one value of $Y$ plus a random order of the colours. Checking every edge takes $O(|A|)$. So the LP dominates the total time, which is polynomial in $n$ and $k$ with no exponential dependence on $k$. The algorithm can be made deterministic with the method of conditional expectations, losing an arbitrarily small amount.
 
-\textbf{Finding a colouring.} Theorem~\ref{thm:3col} needs a 3-colouring. Finding one is NP-hard in general, but it takes linear time for graphs of maximum degree 3 (other than $K_4$), and for outerplanar and series-parallel graphs, where greedy colouring works.
-
-\textbf{Our computations.} The density search evaluates the CDF on a grid of $T$ points in $O(N^2+NT)$ time per step. The grid LP for $c$ colours has one variable per multiset of labels, $\binom{m+c}{c}$ in total, which is about $1.4\times10^5$ for 4 colours with $m=40$. Each of these runs took a few minutes at most.
-
 \section{Conclusion}
 \begin{table}[h]
 \caption{Summary of our results.}\label{tab:ours}
-\small\renewcommand{\arraystretch}{1.15}
+\small
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.50\columnwidth}>{\raggedright\arraybackslash}p{0.45\columnwidth}@{}}
 \toprule
 Result & How it was shown\\
@@ -259,21 +251,17 @@ no single distribution reaches $0.5$ on all DAGs & proof\\
 \end{tabular}
 \end{table}
 
-We went through the main algorithms for \DED$(k)$ and proved their correctness and running time. The key point we took away is that KKR's analysis reduces everything to a single question: how close can the difference of two random labels get to the uniform distribution on $[-1,1]$? Looking at the problem this way led to our results in Table~\ref{tab:ours}. For independent labels, the best constant is now pinned down to $[0.5431,0.5445]$. For correlated labels, the optimal $\frac12(k+1)$ extends from bipartite DAGs to 3-colourable ones, but it cannot be reached on all DAGs with one fixed distribution.
+We went through the main algorithms for \DED$(k)$ and proved their correctness and running time. The key point we took away is that KKR's analysis reduces everything to a single question: how close can the difference of two random labels get to the uniform distribution on $[-1,1]$? For independent labels, the best constant is now pinned down to $[0.5431,0.5445]$. For correlated labels, the optimal $\frac12(k+1)$ extends from bipartite DAGs to 3-colourable ones, but it cannot be reached on all DAGs with one fixed distribution.
 
 \section{Gaps and Future Directions}
 \begin{itemize}
 \item \emph{A gap in an earlier proof.} When we worked through Klein and Wexler's $\frac23(k+1)$ algorithm~\cite{kw}, we could not complete the final cost step. It needs the deleted low-value edges to be paid for by their own LP value, and the lemma they use only bounds this against the whole LP. A direct calculation only gives about $0.89k$. This does not affect the newer results, which avoid that step.
 \item \emph{Our numbers are not formal proofs.} The upper bound and the 4- and 5-colour results are checked carefully, but in floating point. Interval arithmetic would make them fully rigorous.
-\item \emph{Closing the window.} The cosine method does not use the fact that a density is non-negative. This is probably why it levels off. Similar problems about autoconvolutions~\cite{cs} needed new ideas at this point.
+\item \emph{Closing the window.} The cosine method does not use the fact that a density is non-negative. This is probably why it levels off, as in related autoconvolution problems~\cite{cs}.
 \item \emph{4 and 5 colours.} We expect explicit constructions like $\{0,Y,1-Y\}$ to exist, but we have not found them.
 \item \emph{Labels that depend on $x$.} Our last theorem says a $\frac12(k+1)$ algorithm must either choose labels using the LP solution, or analyse whole paths instead of single edges.
 \item \emph{Hardness.} It is still open whether any constant factor is NP-hard. A result like that would also say something new about project scheduling~\cite{sv}.
 \end{itemize}
-
-\begin{acks}
-We used an AI assistant to help us read the papers, break the problem into smaller parts and set up the numerical checks. We went through the proofs ourselves and re-ran every computation reported here.
-\end{acks}
 
 \begin{thebibliography}{9}
 \bibitem{kkr} S.~Kalantarzadeh, N.~Klein, V.~Reis. A randomized rounding approach for DAG edge deletion. APPROX 2025; arXiv:2507.07943.
