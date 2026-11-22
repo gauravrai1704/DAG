@@ -3,7 +3,8 @@
 \settopmatter{printacmref=false, printccs=false, printfolios=true, authorsperrow=4}
 \renewcommand\footnotetextcopyrightpermission[1]{}
 
-\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
 \usepackage{array}
 \usepackage{enumitem}
 \usepackage{algorithm}
@@ -63,14 +64,14 @@ Any valid deletion set gives a feasible 0/1 solution, so the LP value is at most
 Bound & Source and idea\\
 \midrule
 $k$ & Kenkre et al.~\cite{kpps}: delete edges with $x_e\ge1/k$\\
-$\tfrac23(k+1)$ & Klein and Wexler~\cite{kw}: threshold plus random 3 levels\\
+$\tfrac23(k+1)$ & Klein~\cite{kw}: threshold plus random 3 levels\\
 $0.586(k+1)$ & KKR~\cite{kkr}: uniform random labels\\
 $0.549(k+1)$ & KKR~\cite{kkr}: tuned random labels\\
 $0.5(k+1)$, bipartite DAGs & KKR~\cite{kkr}: correlated labels\\
 \midrule
 no $\lfloor k/2\rfloor-\varepsilon$ (UGC) & \cite{kpps}, building on Svensson~\cite{sv}\\
 no $\sqrt2-\varepsilon$ (NP), $k\ge4$ & reduction from Vertex Cover\\
-LP gap at least $(k+1)/2$ & Klein and Wexler~\cite{kw,abglsc}\\
+LP gap at least $(k+1)/2$ & Klein~\cite{kw}, using~\cite{abglsc}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -80,8 +81,8 @@ LP gap at least $(k+1)/2$ & Klein and Wexler~\cite{kw,abglsc}\\
 \subsection{A first try: threshold rounding}
 Solve the LP and delete every edge with $x_e\ge1/k$. Each path of length $k$ has $k$ edges whose values add up to at least 1, so one of them is at least $1/k$, and the path is broken. An edge we delete had $x_e\ge 1/k$, so its cost is at most $k\cdot c_ex_e$. This gives a factor of $k$. It is the best this rule can do: on a single path with every $x_e=1/k$, it deletes all $k$ edges when one would have been enough. The rule looks at each path separately, and that is the reason it loses so much.
 
-\subsection{Klein and Wexler: threshold, then random levels}
-Klein and Wexler~\cite{kw} were the first to beat $k$. They first delete every edge with $x_e\ge\tau$, where $\tau=\frac{3}{2(k+1)}$. Then they put every vertex on a random level from $\{1,2,3\}$ and delete the remaining edges with $x_e>0$ that do not go forward.
+\subsection{Klein: threshold, then random levels}
+Klein~\cite{kw} was the first to beat $k$. The algorithm first deletes every edge with $x_e\ge\tau$, where $\tau=\frac{3}{2(k+1)}$. Then it puts every vertex on a random level from $\{1,2,3\}$ and deletes the remaining edges with $x_e>0$ that do not go forward.
 
 \subsection{Rounding with random labels}\label{sec:labels}
 The algorithm of Kalantarzadeh, Klein and Reis~\cite{kkr} (KKR from now on) fixes this by making one global random choice. Each vertex gets a real label in $[0,1]$, which we can think of as a ``soft level''. An edge is deleted when it does not climb enough, where the amount it needs to climb depends on its LP value (Algorithm~\ref{alg:kkr}).
@@ -113,8 +114,8 @@ where $T$ is the CDF of the triangle distribution on $[-1,1]$. This made the sea
 
 \section{Proof of Correctness}\label{sec:proofs}
 
-\subsection{Threshold and Klein--Wexler are valid}
-For threshold rounding this was shown in Section~2.1. For Klein and Wexler, take a path of length $k$ that survives the first step. All its edges have $x_e<\tau$ and the values add up to at least 1. So more than $1/\tau=\frac23(k+1)$ of its edges have $x_e>0$, and fewer than $\frac{k-2}3$ have $x_e=0$. The zero edges split the path into fewer than $\frac{k+1}3$ runs of positive edges, so the average run is longer than 2 edges. Some run then has at least 3 edges, and three random levels can never keep three edges in a row going forward. So the path gets broken.
+\subsection{Threshold and Klein's algorithm are valid}
+For threshold rounding this was shown in Section~2.1. For Klein's algorithm, take a path of length $k$ that survives the first step. All its edges have $x_e<\tau$ and the values add up to at least 1. So more than $1/\tau=\frac23(k+1)$ of its edges have $x_e>0$, and fewer than $\frac{k-2}3$ have $x_e=0$. The zero edges split the path into fewer than $\frac{k+1}3$ runs of positive edges, so the average run is longer than 2 edges. Some run then has at least 3 edges, and three random levels can never keep three edges in a row going forward. So the path gets broken.
 
 The cost analysis uses the following fact. We give a short proof of our own.
 \begin{lemma}\label{lem:avg}
@@ -171,7 +172,7 @@ Kenkre et al.~\cite{kpps} turn this into a result for edges with a simple gadget
 \end{itemize}
 The costs are the same in both directions, so the gap of about $t$ carries over. Hence \DED$(k)$ cannot be approximated better than $\lfloor k/2\rfloor-\varepsilon$ for constant $k\ge4$, assuming the UGC. The gadget graph is bipartite (in-copies on one side, out-copies on the other), which is why the $\frac12(k+1)$ bipartite algorithm is essentially the best possible on these instances.
 
-\textbf{Integrality gap.} The ratio of every LP-based algorithm in this report is measured against the LP value. So none of them can beat the worst ratio $\mathrm{OPT}/\mathrm{LP}$ over all instances. Klein and Wexler~\cite{kw} showed that this ratio can be close to $\frac{k+1}2$, using a graph of Alon et al.~\cite{abglsc}:
+\textbf{Integrality gap.} The ratio of every LP-based algorithm in this report is measured against the LP value. So none of them can beat the worst ratio $\mathrm{OPT}/\mathrm{LP}$ over all instances. Klein~\cite{kw} showed that this ratio can be close to $\frac{k+1}2$, using a graph of Alon et al.~\cite{abglsc}:
 \begin{itemize}
 \item Choose a set $A$ of $r\approx n^{1/3}$ integers whose pairwise differences are all different. On the vertices $0,1,\dots,n-1$ (arithmetic mod $n$), add an edge $i+a\to i+b$ for every $i$ and every $a<b$ in $A$.
 \item The edges form $n$ cliques of size $r$ that share no edges. When the vertices are split into $k$ levels, at most a $\frac{k-1}{k}$ fraction of the edges inside each clique join two different levels.
@@ -182,30 +183,160 @@ On the other hand, setting $x_e=\frac1k$ for every edge satisfies every path con
 
 \subsection{Limits of the method}
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\begin{tikzpicture}[x=1.05cm,y=0.52cm,font=\small]
-\fill[blue!12] ({(0.5431-0.536)*1000},-0.25) rectangle ({(0.5446-0.536)*1000},0.25);
-\draw[thick,gray] (0,0) -- (14,0);
-\node[below,gray] at (0,-0.1) {0.536}; \node[below,gray] at (14,-0.1) {0.550};
-\foreach \v/\c/\h in {0.5390/gray/-1, 0.5420/gray/-1.6, 0.5431/blue/-1}{
-  \draw[\c] ({(\v-0.536)*1000},0) -- ({(\v-0.536)*1000},\h+0.2);
-  \fill[\c] ({(\v-0.536)*1000},0) circle (2.5pt);}
-\foreach \v/\c/\h in {0.5446/blue/1.0, 0.5450/blue/1.6, 0.5482/gray/1.0}{
-  \draw[\c] ({(\v-0.536)*1000},0) -- ({(\v-0.536)*1000},\h-0.2);
-  \fill[\c] ({(\v-0.536)*1000},0) circle (2.5pt);}
-\node[anchor=east,gray] at ({(0.5390-0.536)*1000},-1) {KKR proof (0.5390)};
-\node[anchor=west,gray] at ({(0.5420-0.536)*1000},-1.6) {KKR stated (0.5420)};
-\node[anchor=west,blue] at ({(0.5431-0.536)*1000},-1) {ours, 5 cosines (0.5431)};
-\node[anchor=east,blue] at ({(0.5446-0.536)*1000},1.0) {ours, 48 pieces (0.5446)};
-\node[anchor=west,blue] at ({(0.5450-0.536)*1000},1.6) {ours, 24 pieces (0.5450)};
-\node[anchor=west,gray] at ({(0.5482-0.536)*1000},1.0) {KKR density (0.5482)};
-\node[anchor=west,gray!80!black] at (0,1.3) {distributions found};
-\node[anchor=west,gray!80!black] at (0,-1.7) {proven lower limits};
+\pgfplotstableread{
+t uniform kkr ours
+-0.300 0.35000 0.41085 0.41854
+-0.290 0.35500 0.41260 0.42042
+-0.280 0.36000 0.41437 0.42224
+-0.270 0.36500 0.41615 0.42390
+-0.260 0.37000 0.41795 0.42540
+-0.250 0.37500 0.41975 0.42676
+-0.240 0.38000 0.42157 0.42812
+-0.230 0.38500 0.42340 0.42958
+-0.220 0.39000 0.42523 0.43107
+-0.210 0.39500 0.42708 0.43247
+-0.200 0.40000 0.42894 0.43380
+-0.190 0.40500 0.43080 0.43514
+-0.180 0.41000 0.43267 0.43646
+-0.170 0.41500 0.43456 0.43774
+-0.160 0.42000 0.43645 0.43896
+-0.150 0.42500 0.43835 0.44011
+-0.140 0.43000 0.44027 0.44118
+-0.130 0.43500 0.44219 0.44226
+-0.120 0.44000 0.44414 0.44335
+-0.110 0.44500 0.44611 0.44457
+-0.100 0.45000 0.44813 0.44588
+-0.090 0.45500 0.45021 0.44698
+-0.080 0.46000 0.45240 0.44782
+-0.070 0.46500 0.45477 0.44886
+-0.060 0.47000 0.45743 0.45024
+-0.050 0.47500 0.46054 0.45224
+-0.040 0.48000 0.46439 0.45496
+-0.030 0.48500 0.46941 0.45814
+-0.020 0.49000 0.47625 0.46168
+-0.010 0.49500 0.48593 0.47376
+0.000 0.50000 0.50000 0.50000
+0.010 0.50490 0.51379 0.52572
+0.020 0.50961 0.52282 0.53682
+0.030 0.51413 0.52881 0.53942
+0.040 0.51846 0.53287 0.54158
+0.050 0.52262 0.53570 0.54321
+0.060 0.52660 0.53775 0.54413
+0.070 0.53042 0.53931 0.54445
+0.080 0.53407 0.54055 0.54445
+0.090 0.53757 0.54157 0.54427
+0.100 0.54091 0.54244 0.54428
+0.110 0.54410 0.54321 0.54445
+0.120 0.54714 0.54389 0.54451
+0.130 0.55004 0.54451 0.54446
+0.140 0.55281 0.54506 0.54437
+0.150 0.55543 0.54557 0.54427
+0.160 0.55793 0.54602 0.54420
+0.170 0.56030 0.54642 0.54417
+0.180 0.56254 0.54679 0.54416
+0.190 0.56466 0.54710 0.54415
+0.200 0.56667 0.54738 0.54413
+0.210 0.56855 0.54761 0.54409
+0.220 0.57033 0.54780 0.54407
+0.230 0.57199 0.54796 0.54408
+0.240 0.57355 0.54807 0.54406
+0.250 0.57500 0.54815 0.54394
+0.260 0.57635 0.54819 0.54381
+0.270 0.57760 0.54819 0.54374
+0.280 0.57875 0.54817 0.54374
+0.290 0.57981 0.54810 0.54380
+0.300 0.58077 0.54801 0.54386
+0.310 0.58164 0.54788 0.54382
+0.320 0.58242 0.54772 0.54370
+0.330 0.58312 0.54752 0.54360
+0.340 0.58373 0.54730 0.54350
+0.350 0.58426 0.54705 0.54342
+0.360 0.58471 0.54677 0.54335
+0.370 0.58507 0.54646 0.54331
+0.380 0.58536 0.54612 0.54328
+0.390 0.58558 0.54576 0.54326
+0.400 0.58571 0.54537 0.54324
+0.410 0.58578 0.54495 0.54319
+0.420 0.58577 0.54451 0.54312
+0.430 0.58570 0.54405 0.54311
+0.440 0.58556 0.54355 0.54318
+0.450 0.58534 0.54304 0.54325
+0.460 0.58507 0.54250 0.54330
+0.470 0.58473 0.54194 0.54323
+0.480 0.58432 0.54136 0.54298
+0.490 0.58386 0.54075 0.54273
+0.500 0.58333 0.54012 0.54260
+0.510 0.58275 0.53948 0.54240
+0.520 0.58211 0.53881 0.54198
+0.530 0.58141 0.53812 0.54151
+0.540 0.58065 0.53741 0.54124
+0.550 0.57984 0.53668 0.54098
+0.560 0.57897 0.53593 0.54034
+0.570 0.57806 0.53516 0.53949
+0.580 0.57709 0.53438 0.53885
+0.590 0.57607 0.53358 0.53837
+0.600 0.57500 0.53275 0.53782
+0.610 0.57388 0.53192 0.53713
+0.620 0.57272 0.53106 0.53614
+0.630 0.57150 0.53019 0.53486
+0.640 0.57024 0.52930 0.53348
+0.650 0.56894 0.52840 0.53204
+0.660 0.56759 0.52747 0.53058
+0.670 0.56620 0.52654 0.52911
+0.680 0.56476 0.52559 0.52768
+0.690 0.56328 0.52462 0.52632
+0.700 0.56176 0.52364 0.52556
+0.710 0.56020 0.52264 0.52557
+0.720 0.55860 0.52163 0.52514
+0.730 0.55697 0.52061 0.52365
+0.740 0.55529 0.51957 0.52192
+0.750 0.55357 0.51852 0.52054
+0.760 0.55182 0.51745 0.51924
+0.770 0.55003 0.51638 0.51774
+0.780 0.54820 0.51529 0.51616
+0.790 0.54634 0.51418 0.51462
+0.800 0.54444 0.51307 0.51310
+0.810 0.54251 0.51195 0.51149
+0.820 0.54055 0.51081 0.50980
+0.830 0.53855 0.50967 0.50798
+0.840 0.53652 0.50852 0.50603
+0.850 0.53446 0.50737 0.50400
+0.860 0.53237 0.50622 0.50193
+0.870 0.53024 0.50508 0.50005
+0.880 0.52809 0.50397 0.49848
+0.890 0.52590 0.50289 0.49784
+0.900 0.52368 0.50188 0.49812
+0.910 0.52144 0.50096 0.49840
+0.920 0.51917 0.50019 0.49847
+0.930 0.51687 0.49960 0.49864
+0.940 0.51454 0.49926 0.49896
+0.950 0.51218 0.49923 0.49918
+0.960 0.50980 0.49954 0.49918
+0.970 0.50739 0.50015 0.49967
+0.980 0.50495 0.50086 0.50100
+0.990 0.50249 0.50117 0.50151
+1.000 0.50000 0.50000 0.50000
+}\ratiodata
+\begin{tikzpicture}
+\begin{axis}[width=\columnwidth, height=5.6cm, xmin=-0.3, xmax=1, ymin=0.37, ymax=0.6,
+  xlabel={threshold $t$}, ylabel={$\Pr[Z\le t]\,/\,(1+t)$},
+  tick label style={font=\scriptsize}, label style={font=\small},
+  ytick={0.4,0.45,0.5,0.55,0.6}, grid=major, grid style={gray!20},
+  legend style={font=\scriptsize, draw=none, fill=white, fill opacity=0.8, text opacity=1, at={(0.98,0.03)}, anchor=south east},
+  legend cell align=left]
+\addplot[gray, thick, densely dashed] table[x=t, y=uniform]{\ratiodata};
+\addplot[orange!85!black, thick] table[x=t, y=kkr]{\ratiodata};
+\addplot[blue, very thick] table[x=t, y=ours]{\ratiodata};
+\addplot[red, thick, dash pattern=on 4pt off 2pt] coordinates {(-0.3,0.5431) (1,0.5431)};
+\legend{uniform labels (peak 0.586), KKR density (peak 0.548), ours{,} 48 pieces (peak 0.5446), our lower bound 0.5431}
+\addplot[only marks, mark=*, mark size=1.3pt, black] coordinates {(0.414,0.5858) (0.267,0.5482) (0.12,0.5445)};
+\end{axis}
 \end{tikzpicture}
-\caption{Where the best constant $\alpha^*$ for independent labels can lie (the ratio is $\alpha^*(k+1)$). After KKR it was somewhere in $[0.542,0.549]$. It is now in the shaded range $[0.5431,0.5446]$.}
+\caption{The ratio $\Pr[Z\le t]/(1+t)$ for independent labels. The approximation constant of each label distribution is the peak of its curve (dots). Every independent distribution's curve must rise above the dashed red line at $0.5431$ somewhere, so the best possible peak lies between $0.5431$ and $0.5446$.}
 \label{fig:window}
-\end{figure*}
+\end{figure}
 
 \textbf{Independent labels cannot reach $\frac12$.} If $X$ and $Y$ are independent with the same distribution, then $\E\cos(t(X-Y))=|\E e^{itX}|^2\ge0$. For the uniform distribution on $[-1,1]$, however, $\E\cos(tU)=\sin t/t$, which is negative for $t\in(\pi,2\pi)$. So $X-Y$ can never be exactly uniform. KKR turn this into a number. Let $G(x)=\Pr[Z\le x]-\frac{1+x}2$. Integration by parts gives
 \[\textstyle\E\cos(tZ)=\frac{\sin t}t+2t\int_0^1\sin(tx)G(x)\,dx.\]
@@ -255,7 +386,7 @@ The key point we took away is that KKR's analysis reduces everything to a single
 
 \section{Gaps and Future Directions}
 \begin{itemize}
-\item \emph{A gap in an earlier proof.} When we worked through Klein and Wexler's $\frac23(k+1)$ algorithm~\cite{kw}, we could not complete the final cost step. It needs the deleted low-value edges to be paid for by their own LP value, and the lemma they use only bounds this against the whole LP. A direct calculation only gives about $0.89k$. This does not affect the newer results, which avoid that step.
+\item \emph{A gap in an earlier proof.} When we worked through Klein's $\frac23(k+1)$ algorithm~\cite{kw}, we could not complete the final cost step. It needs the deleted low-value edges to be paid for by their own LP value, and the lemma they use only bounds this against the whole LP. A direct calculation only gives about $0.89k$. This does not affect the newer results, which avoid that step.
 \item \emph{One bound is only checked in floating point.} The upper bound $0.5446$ was checked carefully, but not with exact arithmetic. Interval arithmetic would make it a full proof.
 \item \emph{Closing the window.} The cosine method ignores that a density is non-negative, which is probably why it levels off, as in related autoconvolution problems~\cite{cs}.
 \item \emph{4 and 5 colours.} We expect explicit constructions like $\{0,Y,1-Y\}$ to exist, but we have not found them.
