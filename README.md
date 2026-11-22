@@ -6,17 +6,29 @@ Gaurav Rai (2410110133), Shaurya Sharma (2410110317), Sharanya Gupta (2410110315
 
 ## The problem
 
-Given a DAG with edge costs and a number `k`, delete the cheapest set of edges so that no path with `k` edges is left (DED(k)). The best known algorithm (Kalantarzadeh, Klein, Reis, APPROX 2025) rounds an LP using random vertex labels and gets ratio `0.549(k+1)`. Under the Unique Games Conjecture nothing better than `floor(k/2)` is possible.
+Given a DAG with edge costs and a number `k`, delete the cheapest set of edges so that no path with `k` edges is left (DED(k)). The best previously published algorithm (Kalantarzadeh, Klein, Reis, APPROX 2025) rounds an LP using random vertex labels and achieves ratio `0.549(k+1)`. Under the Unique Games Conjecture nothing better than `floor(k/2)` is possible.
 
 ## What is in the report
 
-- the threshold, Klein-Wexler and label-rounding algorithms, with proofs that their output is always valid, cost bounds and running time
-- the known hardness and integrality-gap results
+- the threshold, Klein and label-rounding algorithms, with proofs that their output is always valid, cost bounds and running time
+- the known hardness results (`floor(k/2)` under the UGC, `sqrt(2)` NP-hardness for `k >= 4`) and the integrality gap
 - our results:
   - a step-shaped label distribution with ratio about `0.5446(k+1)`
   - a lower bound showing no independent label distribution beats `0.5431(k+1)`
   - a `0.5(k+1)` rounding for DAGs that come with a 3-colouring, and `0.5064(k+1)` for planar DAGs
-  - a proof that no single label distribution reaches `0.5(k+1)` on every DAG
+  - a proof that no single label distribution reaches `0.5(k+1)` on every DAG (fails for complete DAGs with `n >= 429` vertices)
+- a note on the `(k+1)/2` integrality gap from Klein's thesis: the argument is valid for `k = 2`, but for `k >= 3` its "at most half the edges go forward" step fails on the instances we tested, so we treat that case as unconfirmed
+
+## What is proved and what is numerical
+
+| Result | Status |
+|---|---|
+| `0.5(k+1)` for 3-colourable DAGs | proof |
+| no single distribution reaches `0.5` on all DAGs | proof |
+| independent labels cannot beat `0.5431(k+1)` | proof, with the integrals checked numerically |
+| `0.5064(k+1)` for planar DAGs | LP solution checked with exact fractions |
+| `0.5446(k+1)` with our 48-piece density | numerical check in floating point (not interval arithmetic) |
+| integrality-gap step fails for `k = 3` | experiment on small instances, not a disproof of the asymptotic claim |
 
 ## Layout
 
