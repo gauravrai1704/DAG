@@ -13,7 +13,7 @@ Given a DAG with edge costs and a number `k`, delete the cheapest set of edges s
 - the threshold, Klein-Wexler and label-rounding algorithms, with proofs that their output is always valid, cost bounds and running time
 - the known hardness and integrality-gap results
 - our results:
-  - a step-shaped label distribution with ratio about `0.5445(k+1)`
+  - a step-shaped label distribution with ratio about `0.5446(k+1)`
   - a lower bound showing no independent label distribution beats `0.5431(k+1)`
   - a `0.5(k+1)` rounding for DAGs that come with a 3-colouring, and `0.5064(k+1)` for planar DAGs
   - a proof that no single label distribution reaches `0.5(k+1)` on every DAG
