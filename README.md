@@ -41,6 +41,7 @@ cd scripts
 | `checkd.py FILE`, `bracket.py FILE` | checks a saved density (fine grid, Monte Carlo, monotone bracket) |
 | `kw.py c:m ...` | grid LP for `c` colours on grid `m`, answer re-checked with exact fractions, e.g. `python3 kw.py 4:40` |
 | `fig_ratio_curves.py` | data for Figure 1 (the ratio curves for uniform, KKR and our labels) |
+| `klein_gap_check.py p n k` | local search on the integrality-gap graph of Section 3.4, e.g. `11 6000 3` |
 | `tri.py`, `tour.py`, `sym.py`, `inspect_tri.py` | correlated-label LPs on small graphs and complete DAGs |
 
 `best_p_24.npy` and `best_p_48.npy` are the densities used in the report (ratios 0.54499 and 0.54451).
