@@ -1,0 +1,49 @@
+# Randomized Rounding for Minimum-Weight Edge Deletion in DAGs
+
+CSD319 (Design and Analysis of Algorithms) project, Shiv Nadar University.
+
+Gaurav Rai (2410110133), Shaurya Sharma (2410110317), Sharanya Gupta (2410110315), Kashvi Tak (2410110165)
+
+## The problem
+
+Given a DAG with edge costs and a number `k`, delete the cheapest set of edges so that no path with `k` edges is left (DED(k)). The best known algorithm (Kalantarzadeh, Klein, Reis, APPROX 2025) rounds an LP using random vertex labels and gets ratio `0.549(k+1)`. Under the Unique Games Conjecture nothing better than `floor(k/2)` is possible.
+
+## What is in the report
+
+- the threshold, Klein-Wexler and label-rounding algorithms, with proofs that their output is always valid, cost bounds and running time
+- the known hardness and integrality-gap results
+- our results:
+  - a step-shaped label distribution with ratio about `0.5445(k+1)`
+  - a lower bound showing no independent label distribution beats `0.5431(k+1)`
+  - a `0.5(k+1)` rounding for DAGs that come with a 3-colouring, and `0.5064(k+1)` for planar DAGs
+  - a proof that no single label distribution reaches `0.5(k+1)` on every DAG
+
+## Layout
+
+```
+report/main.tex   report source (acmart, two column, compile with pdfLaTeX)
+report/main.pdf   compiled report
+scripts/          code for every number in the report
+```
+
+## Running the scripts
+
+```
+pip install -r requirements.txt
+cd scripts
+```
+
+| Script | What it does |
+|---|---|
+| `verify.py` | known constants (2-sqrt(2), 0.5482, 0.539) and the multi-cosine lower bounds |
+| `cert4.py`, `cert5.py` | numerical integration check of the 4- and 5-cosine bounds |
+| `optd.py N` | searches for the best step density with `N` pieces, saves `best_p_N.npy` |
+| `checkd.py FILE`, `bracket.py FILE` | checks a saved density (fine grid, Monte Carlo, monotone bracket) |
+| `kw.py c:m ...` | grid LP for `c` colours on grid `m`, answer re-checked with exact fractions, e.g. `python3 kw.py 4:40` |
+| `tri.py`, `tour.py`, `sym.py`, `inspect_tri.py` | correlated-label LPs on small graphs and complete DAGs |
+
+`best_p_24.npy` and `best_p_48.npy` are the densities used in the report (ratios 0.54499 and 0.54451).
+
+## References
+
+Main paper: S. Kalantarzadeh, N. Klein, V. Reis, *A Randomized Rounding Approach for DAG Edge Deletion*, APPROX 2025, [arXiv:2507.07943](https://arxiv.org/abs/2507.07943). The full list is in the report.
